@@ -42,9 +42,16 @@ Refine.LocalDirectorySourceUI.prototype.attachUI = function (bodyDiv) {
       window.alert($.i18n("files-import/no-directory"));
       return;
     }
-    // Split on comma or newline
-    var paths = pathText.split(/[,\n]+/).map(function (s) { return s.trim(); })
-      .filter(function (s) { return s.length > 0; });
+    // Split on comma or newline, clean each path
+    var paths = pathText.split(/[,\n]+/).map(function (s) {
+      s = s.trim();
+      // Strip surrounding quotes if present
+      if ((s.startsWith('"') && s.endsWith('"')) ||
+          (s.startsWith("'") && s.endsWith("'"))) {
+        s = s.substring(1, s.length - 1);
+      }
+      return s.trim();
+    }).filter(function (s) { return s.length > 0; });
 
     var columns = [];
     bodyDiv.find(".col-checkbox:checked").each(function () {
