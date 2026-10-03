@@ -1,94 +1,86 @@
-# Files Extension for OpenRefine
-OpenRefine provides a powerful feature for generating detailed file information from selected directories in your local system. This functionality allows users to create projects containing comprehensive file metadata.
+# Files Extension for OpenRefine (Clojure Port)
 
-Features included in this extension:
-* Start an OpenRefine project by loading details of files from one or more folders on your local system.
-* File details included are file name, extension, size in KB, creation date, last modification date, permissions, SHA-256 checksum, author and file path
+OpenRefine extension to import file metadata from local directories and apply trieshake path reorganisation to columns.
 
+## Features
 
-It works with **OpenRefine 3.8.7 and later versions of OpenRefine**. 
+- **Import file metadata** — create an OpenRefine project from one or more local directories
+  - Configurable columns: filename, extension, size, dates, path, MIME type, SHA-256 checksum, permissions, owner
+  - Depth-1 default scan with recursive opt-in
+  - Hidden files (dot-prefix) excluded automatically
+- **Trieshake column action** — radix-trie chunking of path columns
+  - Forward mode: split path into prefix chunks + encoded filename
+  - Reverse mode: undo/regroup trieshaked paths with optional new prefix length
+  - Preview dialog before applying
+  - Undoable (Ctrl+Z) via OpenRefine history
 
-## How to use this extension
+Works with **OpenRefine 3.10.x**.
 
-### Install this extension in OpenRefine
+## Install
 
-Download the .zip file of the [latest release of this extension](https://github.com/OpenRefine/FilesExtension/releases).
-Unzip this file and place the unzipped folder in your OpenRefine extensions folder. [Read more about installing extensions in OpenRefine's user manual](https://docs.openrefine.org/manual/installing#installing-extensions).
+### From release zip
 
-When this extension is installed correctly, you will now see the additional option 'Files from local directory' when starting a new project in OpenRefine. 
+Download the `.zip` from [releases](https://github.com/OpenRefine/FilesExtension/releases), unzip into your OpenRefine extensions folder.
 
-### Start an OpenRefine project
+### From source
 
-After installing this extension, click the 'Files from local directory' option to start a new project in OpenRefine. Use the "Select a drive or folder" dropdown to select the top level drive or folder to get directory details.
+```
+make install
+```
 
-<img width="1439" alt="Start project" src="https://github.com/user-attachments/assets/f48c9edb-3081-4be2-ab8a-de41e0f0f991" />
+This builds the uberjar, assembles the extension, and copies it to `~/Library/Application Support/OpenRefine/extensions/files-ext/`.
 
----
+Restart OpenRefine after installing.
 
-### Directory Navigation
+## Usage
 
-The system presents a hierarchical directory browser that allows you to:
-- Expand/collapse directories using arrow indicators
-- Select multiple directories simultaneously using checkboxes
-- View the complete directory structure under the selected root drive/folder
-- Navigate through system directories including user folders, system folders, and mounted volumes
+### Import from local directory
 
-<img width="1436" alt="Directory navigation" src="https://github.com/user-attachments/assets/e753b3c6-1b14-427d-b25d-4f67155f683d" />
+1. **Create Project** → select **Files from local directory**
+2. Enter one or more directory paths (comma or newline separated)
+3. Choose metadata columns via checkboxes
+4. Optionally enable recursive scanning
+5. Click **Next** → preview data → **Create project**
 
+### Trieshake
 
----
-
-### File Details Generation
-Once directories are selected, Click Next. In the project preview screen (`Configure parsing options`), you can view the details of the files in the selected folder(s).
-The following information is included for each file:
-
-| Field | Description |
-|-------|-------------|
-| fileName | Name of the file with extension |
-| fileSize(KB) | Size of the file in kilobytes |
-| fileExtension | The file's extension type |
-| lastModifiedTime | Last modification timestamp |
-| creationTime | File creation timestamp |
-| author | Owner/creator of the file |
-| filePath | Complete path to the file location |
-| filePermissions | Read/write/execute permissions |
-| sha256 | SHA-256 hash of the file |
----
-
-### Project Naming Convention
-- The project name is automatically generated based on selected folders
-- Format: `folder-details_[folder1]_[folder2]_and_more
-- Upto 2 selected folders are concatenated in the name
-- Users can modify the generated name before creation
-- Additional tags can be added for better organization
-  
-<img width="1438" alt="Project preview" src="https://github.com/user-attachments/assets/e7f30bd8-38cc-4a7a-8ca6-774fd20e47f3" />
-
-
----
+1. Open a project with a path column
+2. Column header → **Trieshake** → **Trieshake path column...** (or **Reverse trieshake...**)
+3. Set prefix length and extension filter
+4. Preview shows chunk breakdown
+5. Click **Apply** → new columns added (chunk_1, chunk_2, ..., encoded_filename)
 
 ## Development
 
-### Building from source
+### Prerequisites
 
-Run     
-```
-mvn package
-```
+- JDK 11+
+- [Leiningen](https://leiningen.org/)
+- OpenRefine 3.10.x (for runtime testing)
 
-This creates a zip file in the `target` folder, which can then be [installed in OpenRefine](https://docs.openrefine.org/manual/installing#installing-extensions).
+### Commands
 
-### Developing it
+| Command | Description |
+|---------|-------------|
+| `make test` | Run all Clojure tests |
+| `make jar` | Build uberjar |
+| `make extension` | Build extension (jar → extension dir) |
+| `make install` | Install to OpenRefine extensions folder |
+| `make clean` | Clean build artifacts |
+| `make zip` | Package for distribution |
 
-To avoid having to unzip the extension in the corresponding directory every time you want to test it, you can also use another set up: simply create a symbolic link from your extensions folder in OpenRefine to the local copy of this repository. With this setup, you do not need to run `mvn package` when making changes to the extension, but you will still to compile it with `mvn compile` if you are making changes to Java files, and restart OpenRefine if you make changes to any files.
+### Architecture
 
-### Releasing it
+Thin Java interop layer + Clojure core, loaded via URLClassLoader (same pattern as [sankofa-fu-refine](https://github.com/OpenRefine/sankofa-fu-refine)):
 
-- Make sure you are on the `master` branch and it is up to date (`git pull`)
-- Open `pom.xml` and set the version to the desired version number, such as `<version>0.1.0</version>`
-- Commit and push those changes to master
-- Add a corresponding git tag, with `git tag -a v0.1.0 -m "Version 0.1.0"` (when working from GitHub Desktop, you can follow [this process](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/managing-commits/managing-tags) and manually add the `v0.1.0` tag with the description `Version 0.1.0`)
-- Push the tag to GitHub: `git push --tags` (in GitHub Desktop, just push again)
-- Create a new release on GitHub at https://github.com/OpenRefine/FilesExtension/releases/new, providing a release title (such as "Files extension 0.1.0") and a description of the features in this release.
-- Open `pom.xml` and set the version to the expected next version number, followed by `-SNAPSHOT`. For instance, if you just released 0.1.0, you could set `<version>0.1.1-SNAPSHOT</version>`
-- Commit and push those changes.
+- `src/files_ext/scanner.clj` — file walking and metadata extraction
+- `src/files_ext/trieshake.clj` — radix-trie path chunking (pure functions)
+- `src/files_ext/engine.clj` — orchestration layer bridging scanner + trieshake
+- `src/java/com/filesext/` — Java interop (ImportingController, TrieshakeCommand, ApplyTrieshakeOperation)
+- `extension/module/` — frontend (controller.js, import UI, trieshake dialog)
+
+Design spec: `docs/superpowers/specs/2026-10-03-files-ext-clojure-port-design.md`
+
+## License
+
+CC-BY
