@@ -8,7 +8,7 @@ Refine.LocalDirectorySourceUI.prototype.attachUI = function (bodyDiv) {
   this._elmts = DOM.bind(bodyDiv);
 
   // Default columns
-  var defaultCols = ["filename", "extension", "size-kb", "created", "modified", "path", "mime-type"];
+  var defaultCols = ["filename", "extension", "size-kb", "created", "modified", "path", "parent-directory", "mime-type"];
   bodyDiv.find(".col-checkbox").each(function () {
     if (defaultCols.indexOf($(this).val()) >= 0) {
       $(this).prop("checked", true);
@@ -51,14 +51,12 @@ Refine.LocalDirectorySourceUI.prototype.attachUI = function (bodyDiv) {
       columns.push($(this).val());
     });
 
-    var parentDirMode = bodyDiv.find("input[name='parentDirMode']:checked").val();
-
     var doc = {
       directoryPaths: paths,
       columns: columns,
       recursive: self._elmts.recursiveCheck.is(":checked"),
       maxDepth: parseInt(self._elmts.depthInput.val(), 10) || 3,
-      parentDirMode: parentDirMode
+      includeDirs: self._elmts.includeDirsCheck.is(":checked")
     };
     self._controller.startImportingDocument(doc);
   });

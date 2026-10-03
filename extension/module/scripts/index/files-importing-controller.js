@@ -63,7 +63,7 @@ Refine.FilesImportingController.prototype.getOptions = function () {
     columns: this._doc.columns,
     recursive: this._doc.recursive || false,
     maxDepth: this._doc.maxDepth || 3,
-    parentDirMode: this._doc.parentDirMode || "row"
+    includeDirs: this._doc.includeDirs || false
   };
 };
 

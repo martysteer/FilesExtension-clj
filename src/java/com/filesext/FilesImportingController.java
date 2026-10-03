@@ -133,6 +133,8 @@ public class FilesImportingController implements ImportingController {
             optionObj.get("recursive").asBoolean(false);
         int maxDepth = optionObj.has("maxDepth") ?
             optionObj.get("maxDepth").asInt(Integer.MAX_VALUE) : Integer.MAX_VALUE;
+        boolean includeDirs = optionObj.has("includeDirs") &&
+            optionObj.get("includeDirs").asBoolean(false);
 
         // Build columns set from frontend checkboxes
         ArrayNode colArray = (ArrayNode) optionObj.get("columns");
@@ -141,13 +143,6 @@ public class FilesImportingController implements ImportingController {
             for (int i = 0; i < colArray.size(); i++) {
                 columnNames.add(colArray.get(i).asText());
             }
-        }
-
-        // Add parent-directory column if mode is "column"
-        String parentDirMode = optionObj.has("parentDirMode") ?
-            optionObj.get("parentDirMode").asText("row") : "row";
-        if ("column".equals(parentDirMode)) {
-            columnNames.add("parent-directory");
         }
 
         // Call Clojure engine
@@ -165,6 +160,7 @@ public class FilesImportingController implements ImportingController {
         Object opts = hashMap.invoke(
             keyword.invoke("recursive?"), recursive,
             keyword.invoke("max-depth"), maxDepth,
+            keyword.invoke("include-dirs?"), includeDirs,
             keyword.invoke("columns"), cols);
 
         Object metadata = scanDirs.invoke(dirPaths, opts);

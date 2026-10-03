@@ -52,20 +52,23 @@
     (catch Exception _ "N/A")))
 
 (defn- extract-metadata
-  "Extract metadata for a single file. columns determines which fields."
+  "Extract metadata for a single file or directory. columns determines which fields."
   [^java.io.File f columns]
   (let [path (.toPath f)
         attrs (Files/readAttributes path BasicFileAttributes
                 (into-array LinkOption []))
         filename (.getName f)
+        is-dir? (.isDirectory f)
         m (transient {})]
     (when (columns :filename)
       (assoc! m :filename filename))
     (when (columns :extension)
-      (assoc! m :extension (file-extension filename)))
+      (assoc! m :extension (if is-dir? "" (file-extension filename))))
     (when (columns :size-kb)
-      (assoc! m :size-kb (Double/parseDouble
-                           (format "%.2f" (/ (double (.size attrs)) 1024.0)))))
+      (assoc! m :size-kb (if is-dir?
+                           ""
+                           (Double/parseDouble
+                             (format "%.2f" (/ (double (.size attrs)) 1024.0))))))
     (when (columns :created)
       (assoc! m :created (str (.creationTime attrs))))
     (when (columns :modified)
@@ -73,9 +76,11 @@
     (when (columns :path)
       (assoc! m :path (.getAbsolutePath f)))
     (when (columns :mime-type)
-      (assoc! m :mime-type (or (Files/probeContentType path) "unknown")))
+      (assoc! m :mime-type (if is-dir?
+                             ""
+                             (or (Files/probeContentType path) "unknown"))))
     (when (columns :checksum)
-      (assoc! m :checksum (sha256 f)))
+      (assoc! m :checksum (if is-dir? "" (sha256 f))))
     (when (columns :permissions)
       (assoc! m :permissions (file-permissions path)))
     (when (columns :owner)
@@ -96,7 +101,7 @@
 (defn scan-files
   "Walk directory, collect file metadata maps.
    opts: {:recursive? false, :max-depth Integer/MAX_VALUE,
-          :columns #{:filename :extension ...}}"
+          :include-dirs? false, :columns #{:filename :extension ...}}"
   [dir-path opts]
   (let [base (io/file dir-path)]
     (when-not (.exists base)
@@ -107,18 +112,22 @@
       (throw (Exception. (str "Path is not a directory: " dir-path))))
     (let [recursive? (:recursive? opts false)
           max-depth (:max-depth opts Integer/MAX_VALUE)
+          include-dirs? (:include-dirs? opts false)
           columns (or (:columns opts) default-columns)
           file-list (.listFiles base)
           _ (when (nil? file-list)
               (println "files-ext.scanner: cannot list files in:" dir-path)
               (throw (Exception. (str "Cannot list files in directory: " dir-path))))
+          entry-filter (if include-dirs?
+                        (fn [^java.io.File f] (not= f base))  ; exclude base dir itself
+                        (fn [^java.io.File f] (.isFile f)))   ; only files
           files (if recursive?
                   (->> (file-seq base)
-                       (filter #(.isFile ^java.io.File %))
+                       (filter entry-filter)
                        (remove #(hidden? % base))
                        (filter #(within-depth? % base max-depth)))
                   (->> file-list
-                       (filter #(.isFile ^java.io.File %))
+                       (filter entry-filter)
                        (remove #(hidden? % base))))]
       (->> files
            (map #(extract-metadata % columns))

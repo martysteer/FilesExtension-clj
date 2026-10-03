@@ -15,6 +15,7 @@
       <label><input type="checkbox" class="col-checkbox" value="created" checked /> Created date</label>
       <label><input type="checkbox" class="col-checkbox" value="modified" checked /> Modified date</label>
       <label><input type="checkbox" class="col-checkbox" value="path" checked /> Full path</label>
+      <label><input type="checkbox" class="col-checkbox" value="parent-directory" checked /> Parent directory</label>
       <label><input type="checkbox" class="col-checkbox" value="mime-type" checked /> MIME type</label>
       <label><input type="checkbox" class="col-checkbox" value="checksum" /> SHA-256 checksum</label>
       <label><input type="checkbox" class="col-checkbox" value="permissions" /> Permissions</label>
@@ -29,15 +30,9 @@
       <div bind="depthRow" class="files-ext-depth-row">
         Max depth: <input type="number" bind="depthInput" value="3" min="1" max="999" style="width:60px;" />
       </div>
-      <div style="margin-top:8px;">
-        <span>Parent directories:</span>
-        <label style="display:inline; margin-left:12px;">
-          <input type="radio" name="parentDirMode" value="row" bind="parentRowRadio" checked /> as row
-        </label>
-        <label style="display:inline; margin-left:12px;">
-          <input type="radio" name="parentDirMode" value="column" bind="parentColRadio" /> as column
-        </label>
-      </div>
+      <label>
+        <input type="checkbox" bind="includeDirsCheck" /> Include directories as rows
+      </label>
     </div>
 
     <hr />
