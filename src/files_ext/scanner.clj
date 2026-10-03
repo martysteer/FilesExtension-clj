@@ -94,19 +94,29 @@
    opts: {:recursive? false, :max-depth Integer/MAX_VALUE,
           :columns #{:filename :extension ...}}"
   [dir-path opts]
-  (let [base (io/file dir-path)
-        recursive? (:recursive? opts false)
-        max-depth (:max-depth opts Integer/MAX_VALUE)
-        columns (or (:columns opts) default-columns)
-        files (if recursive?
-                (->> (file-seq base)
-                     (filter #(.isFile ^java.io.File %))
-                     (remove #(hidden? % base))
-                     (filter #(within-depth? % base max-depth)))
-                (->> (.listFiles base)
-                     (filter #(.isFile ^java.io.File %))
-                     (remove #(hidden? % base))))]
-    (->> files
-         (map #(extract-metadata % columns))
-         (sort-by :path)
-         vec)))
+  (let [base (io/file dir-path)]
+    (when-not (.exists base)
+      (println "files-ext.scanner: directory does not exist:" dir-path)
+      (throw (Exception. (str "Directory does not exist: " dir-path))))
+    (when-not (.isDirectory base)
+      (println "files-ext.scanner: path is not a directory:" dir-path)
+      (throw (Exception. (str "Path is not a directory: " dir-path))))
+    (let [recursive? (:recursive? opts false)
+          max-depth (:max-depth opts Integer/MAX_VALUE)
+          columns (or (:columns opts) default-columns)
+          file-list (.listFiles base)
+          _ (when (nil? file-list)
+              (println "files-ext.scanner: cannot list files in:" dir-path)
+              (throw (Exception. (str "Cannot list files in directory: " dir-path))))
+          files (if recursive?
+                  (->> (file-seq base)
+                       (filter #(.isFile ^java.io.File %))
+                       (remove #(hidden? % base))
+                       (filter #(within-depth? % base max-depth)))
+                  (->> file-list
+                       (filter #(.isFile ^java.io.File %))
+                       (remove #(hidden? % base))))]
+      (->> files
+           (map #(extract-metadata % columns))
+           (sort-by :path)
+           vec))))

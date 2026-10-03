@@ -72,6 +72,7 @@ public class FilesImportingController implements ImportingController {
             try {
                 doScanPreview(request, response, parameters);
             } catch (Exception e) {
+                e.printStackTrace();
                 HttpUtilities.respond(response, "error",
                     "Unable to scan directory: " + e.getMessage());
             }
@@ -161,6 +162,12 @@ public class FilesImportingController implements ImportingController {
 
         Object metadata = scanDirs.invoke(dirPaths, opts);
         String csv = (String) toCsv.invoke(metadata);
+
+        // Debug logging
+        System.err.println("files-ext: scanned " + dirPaths + " with " + columnNames.size() + " columns");
+        System.err.println("files-ext: metadata result count = " +
+            (metadata instanceof java.util.List ? ((java.util.List)metadata).size() : "unknown"));
+        System.err.println("files-ext: CSV length = " + csv.length());
 
         // Write CSV to temp file for SeparatorBasedImporter
         File csvFile = allocateFile(job.getRawDataDir(), "filesList.csv");

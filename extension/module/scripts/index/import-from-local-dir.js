@@ -15,17 +15,59 @@ Refine.LocalDirectorySourceUI.prototype.attachUI = function (bodyDiv) {
     }
   });
 
-  // Browse button
+  // Browse button - trigger file input
   this._elmts.browseButton.click(function () {
-    Refine.postCSRF("command/files-ext/browse-directory", {}, function (data) {
-      if (data.code === "ok" && data.path) {
-        var current = self._elmts.pathInput.val().trim();
-        if (current.length > 0 && !current.endsWith("\n")) {
-          current += "\n";
+    self._elmts.fileInput.click();
+  });
+
+  // File input handler
+  this._elmts.fileInput.on("change", function (evt) {
+    var files = evt.target.files;
+    if (files.length === 0) return;
+
+    // Try to extract directory path from first file
+    var firstFile = files[0];
+    var path = "";
+
+    // Try webkitRelativePath (shows path relative to selected dir)
+    if (firstFile.webkitRelativePath) {
+      var parts = firstFile.webkitRelativePath.split("/");
+      if (parts.length > 1) {
+        // Get the top-level directory name
+        var dirName = parts[0];
+        path = dirName;
+
+        // If we have a path property (non-standard), try to extract parent
+        if (firstFile.path) {
+          var fullPath = firstFile.path;
+          var idx = fullPath.lastIndexOf("/" + dirName);
+          if (idx > 0) {
+            path = fullPath.substring(0, idx + dirName.length + 1);
+          }
+        } else {
+          // Prompt user to complete the path
+          var userPath = window.prompt(
+            "Browser security prevents reading the full path.\n" +
+            "Please enter the full path to the '" + dirName + "' directory:",
+            dirName
+          );
+          if (userPath) {
+            path = userPath;
+          }
         }
-        self._elmts.pathInput.val(current + data.path);
       }
-    }, "json");
+    }
+
+    if (path) {
+      var current = self._elmts.pathInput.val().trim();
+      if (current.length > 0 && !current.endsWith("\n")) {
+        current += "\n";
+      }
+      self._elmts.pathInput.val(current + path);
+    }
+
+    // Reset file input for reuse
+    evt.target.value = "";
   });
 
   // Recursive toggle
