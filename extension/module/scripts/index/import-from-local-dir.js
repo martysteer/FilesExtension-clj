@@ -57,7 +57,7 @@ Refine.LocalDirectorySourceUI.prototype.attachUI = function (bodyDiv) {
       directoryPaths: paths,
       columns: columns,
       recursive: self._elmts.recursiveCheck.is(":checked"),
-      maxDepth: parseInt(self._elmts.depthInput.val(), 10) || 999,
+      maxDepth: parseInt(self._elmts.depthInput.val(), 10) || 3,
       parentDirMode: parentDirMode
     };
     self._controller.startImportingDocument(doc);
