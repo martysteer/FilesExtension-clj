@@ -1,8 +1,11 @@
 <form bind="form" class="files-ext-source-panel">
   <div class="grid-layout layout-normal">
     <label>Enter directory path(s) — comma or newline separated:</label>
-    <textarea bind="pathInput" rows="3" style="width:400px; font-family:monospace;"
-              placeholder="/path/to/directory"></textarea>
+    <div style="display:flex; gap:6px; align-items:flex-start;">
+      <textarea bind="pathInput" rows="2" style="width:400px; height:2.4em; font-family:monospace; resize:vertical;"
+                placeholder="/path/to/directory"></textarea>
+      <button type="button" bind="browseButton" class="button">Browse&hellip;</button>
+    </div>
 
     <div class="files-ext-columns">
       <strong>Metadata columns:</strong>
@@ -18,11 +21,14 @@
       <label><input type="checkbox" class="col-checkbox" value="owner" /> Owner</label>
     </div>
 
-    <label>
-      <input type="checkbox" bind="recursiveCheck" /> Scan recursively
-    </label>
-    <div bind="depthRow" class="files-ext-depth-row">
-      Max depth: <input type="number" bind="depthInput" value="999" min="1" max="999" style="width:60px;" />
+    <div class="files-ext-dir-options">
+      <strong>Directory options:</strong>
+      <label>
+        <input type="checkbox" bind="recursiveCheck" /> Scan recursively
+      </label>
+      <div bind="depthRow" class="files-ext-depth-row">
+        Max depth: <input type="number" bind="depthInput" value="999" min="1" max="999" style="width:60px;" />
+      </div>
     </div>
 
     <hr />

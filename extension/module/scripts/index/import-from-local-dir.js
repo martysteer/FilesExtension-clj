@@ -15,6 +15,19 @@ Refine.LocalDirectorySourceUI.prototype.attachUI = function (bodyDiv) {
     }
   });
 
+  // Browse button
+  this._elmts.browseButton.click(function () {
+    Refine.postCSRF("command/files-ext/browse-directory", {}, function (data) {
+      if (data.code === "ok" && data.path) {
+        var current = self._elmts.pathInput.val().trim();
+        if (current.length > 0 && !current.endsWith("\n")) {
+          current += "\n";
+        }
+        self._elmts.pathInput.val(current + data.path);
+      }
+    }, "json");
+  });
+
   // Recursive toggle
   this._elmts.recursiveCheck.change(function () {
     self._elmts.depthRow.toggle($(this).is(":checked"));
