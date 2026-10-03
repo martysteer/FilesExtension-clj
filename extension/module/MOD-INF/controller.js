@@ -19,6 +19,12 @@ function init() {
     IM.registerController(
       module, "files-importing-controller", controllerClass.newInstance());
 
+    // Register browse-directory command
+    var browseClass = java.lang.Class.forName(
+      "com.filesext.BrowseDirectoryCommand", true, jarCL);
+    RefineServlet.registerCommand(
+      module, "browse-directory", browseClass.newInstance());
+
     // Register trieshake command
     var trieshakeClass = java.lang.Class.forName(
       "com.filesext.TrieshakeCommand", true, jarCL);
