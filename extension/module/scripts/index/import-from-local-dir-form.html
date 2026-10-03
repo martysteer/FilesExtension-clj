@@ -29,6 +29,15 @@
       <div bind="depthRow" class="files-ext-depth-row">
         Max depth: <input type="number" bind="depthInput" value="999" min="1" max="999" style="width:60px;" />
       </div>
+      <div style="margin-top:8px;">
+        <span>Parent directories:</span>
+        <label style="display:inline; margin-left:12px;">
+          <input type="radio" name="parentDirMode" value="row" bind="parentRowRadio" checked /> as row
+        </label>
+        <label style="display:inline; margin-left:12px;">
+          <input type="radio" name="parentDirMode" value="column" bind="parentColRadio" /> as column
+        </label>
+      </div>
     </div>
 
     <hr />

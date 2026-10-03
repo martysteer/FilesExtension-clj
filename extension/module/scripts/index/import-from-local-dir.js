@@ -51,11 +51,14 @@ Refine.LocalDirectorySourceUI.prototype.attachUI = function (bodyDiv) {
       columns.push($(this).val());
     });
 
+    var parentDirMode = bodyDiv.find("input[name='parentDirMode']:checked").val();
+
     var doc = {
       directoryPaths: paths,
       columns: columns,
       recursive: self._elmts.recursiveCheck.is(":checked"),
-      maxDepth: parseInt(self._elmts.depthInput.val(), 10) || 999
+      maxDepth: parseInt(self._elmts.depthInput.val(), 10) || 999,
+      parentDirMode: parentDirMode
     };
     self._controller.startImportingDocument(doc);
   });

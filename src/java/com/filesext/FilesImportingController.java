@@ -143,6 +143,13 @@ public class FilesImportingController implements ImportingController {
             }
         }
 
+        // Add parent-directory column if mode is "column"
+        String parentDirMode = optionObj.has("parentDirMode") ?
+            optionObj.get("parentDirMode").asText("row") : "row";
+        if ("column".equals(parentDirMode)) {
+            columnNames.add("parent-directory");
+        }
+
         // Call Clojure engine
         IFn scanDirs = Clojure.var("files-ext.engine", "scan-directories");
         IFn toCsv = Clojure.var("files-ext.engine", "metadata-to-csv");

@@ -80,6 +80,10 @@
       (assoc! m :permissions (file-permissions path)))
     (when (columns :owner)
       (assoc! m :owner (file-owner path)))
+    (when (columns :parent-directory)
+      (assoc! m :parent-directory
+              (when-let [parent (.getParentFile f)]
+                (.getAbsolutePath parent))))
     (persistent! m)))
 
 (defn- within-depth?
