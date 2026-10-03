@@ -1,0 +1,31 @@
+<form bind="form" class="files-ext-source-panel">
+  <div class="grid-layout layout-normal">
+    <label>Enter directory path(s) — comma or newline separated:</label>
+    <textarea bind="pathInput" rows="3" style="width:400px; font-family:monospace;"
+              placeholder="/path/to/directory"></textarea>
+
+    <div class="files-ext-columns">
+      <strong>Metadata columns:</strong>
+      <label><input type="checkbox" class="col-checkbox" value="filename" checked disabled /> Filename</label>
+      <label><input type="checkbox" class="col-checkbox" value="extension" checked disabled /> Extension</label>
+      <label><input type="checkbox" class="col-checkbox" value="size-kb" checked /> Size (KB)</label>
+      <label><input type="checkbox" class="col-checkbox" value="created" checked /> Created date</label>
+      <label><input type="checkbox" class="col-checkbox" value="modified" checked /> Modified date</label>
+      <label><input type="checkbox" class="col-checkbox" value="path" checked /> Full path</label>
+      <label><input type="checkbox" class="col-checkbox" value="mime-type" checked /> MIME type</label>
+      <label><input type="checkbox" class="col-checkbox" value="checksum" /> SHA-256 checksum</label>
+      <label><input type="checkbox" class="col-checkbox" value="permissions" /> Permissions</label>
+      <label><input type="checkbox" class="col-checkbox" value="owner" /> Owner</label>
+    </div>
+
+    <label>
+      <input type="checkbox" bind="recursiveCheck" /> Scan recursively
+    </label>
+    <div bind="depthRow" class="files-ext-depth-row">
+      Max depth: <input type="number" bind="depthInput" value="999" min="1" max="999" style="width:60px;" />
+    </div>
+
+    <hr />
+    <button type="submit" bind="nextButton" class="button button-primary">Next &raquo;</button>
+  </div>
+</form>

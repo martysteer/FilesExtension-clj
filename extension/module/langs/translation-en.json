@@ -1,0 +1,16 @@
+{
+  "files-import/menu-localdirectory": "Files from local directory",
+  "files-import/preparing": "Preparing...",
+  "files-import/enter-path": "Enter directory path(s)",
+  "files-import/browse": "Browse...",
+  "files-import/scan-recursive": "Scan recursively",
+  "files-import/max-depth": "Max depth",
+  "files-import/columns-label": "Metadata columns",
+  "files-import/next": "Next \u00bb",
+  "files-import/no-directory": "Please enter at least one directory path.",
+  "files-parsing/start-over": "\u00ab Start over",
+  "files-parsing/proj-name": "Project name:",
+  "files-parsing/project-tags": "Tags:",
+  "files-parsing/create-proj": "Create project \u00bb",
+  "files-parsing/project-default-name": "folder-details"
+}

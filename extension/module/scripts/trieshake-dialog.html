@@ -1,0 +1,41 @@
+<div class="dialog-frame trieshake-dialog">
+  <div class="dialog-header">
+    Trieshake: <span bind="columnName"></span>
+    <span class="trieshake-close" bind="closeButton">&#10005;</span>
+  </div>
+  <div class="dialog-body">
+    <div class="trieshake-controls">
+      <label>Mode:
+        <select bind="modeSelect">
+          <option value="forward">Forward</option>
+          <option value="reverse">Reverse</option>
+        </select>
+      </label>
+      <label>Prefix length:
+        <input type="number" bind="prefixInput" value="4" min="1" max="10" />
+      </label>
+      <label bind="newPrefixRow" style="display:none;">New prefix length (regroup):
+        <input type="number" bind="newPrefixInput" value="3" min="1" max="10" />
+      </label>
+      <label>Extension filter:
+        <input type="text" bind="extensionInput" value="" placeholder=".txt" size="8" />
+      </label>
+    </div>
+
+    <div bind="previewContainer">
+      <table class="trieshake-preview-table">
+        <thead>
+          <tr bind="previewHeader"></tr>
+        </thead>
+        <tbody bind="previewBody"></tbody>
+      </table>
+    </div>
+
+    <div bind="statusText" style="padding: 4px 0; color: #666;"></div>
+
+    <div class="trieshake-footer">
+      <button class="button" bind="cancelButton">Cancel</button>
+      <button class="button button-primary" bind="applyButton">Apply</button>
+    </div>
+  </div>
+</div>
