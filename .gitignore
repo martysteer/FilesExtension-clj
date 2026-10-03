@@ -1,8 +1,10 @@
-# compilation artifacts
-module/MOD-INF/classes/
-module/MOD-INF/lib/
 target/
-test-output/
+extension/module/MOD-INF/lib/
+dist/
+.lein-*
+*.jar
+.nrepl-port
+.DS_Store
 
 # editor files
 .idea/
@@ -10,11 +12,7 @@ test-output/
 .project
 .settings/
 *.log
-logs
 *~
 \#*#
 .*.swp
-*.DS_Store
-*.class
-*.patch
 .vscode/
